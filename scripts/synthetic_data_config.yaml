@@ -1,0 +1,240 @@
+# Synthetic Data Generator Configuration
+# Based on analysis from docs/DATA_REVIEW.md
+
+general:
+  seed: 42                    # For reproducibility
+  date_range_days: 90
+  start_date: "2024-01-01"
+  output_dir: "data/synthetic"
+  encoding: "utf-8"           # UTF-8 for compatibility (source was UTF-16-LE)
+  delimiter: "\t"             # Tab-separated like source
+
+geography:
+  markets:
+    - Houston
+    - Dallas
+    - Austin
+    - San Antonio
+    - Phoenix
+    - Denver
+    - Atlanta
+    - Chicago
+    - Miami
+    - Seattle
+    - Portland
+    - Las Vegas
+    - Charlotte
+    - Nashville
+    - Orlando
+
+campaigns:
+  types:
+    - NonBrand
+    - Brand
+    - Competitor
+  type_weights:
+    NonBrand: 0.782
+    Brand: 0.067
+    Competitor: 0.091
+  # Remaining ~6% allocated proportionally
+
+ad_groups:
+  per_campaign: [3, 5]        # min, max
+  themes:
+    NonBrand:
+      - "Bathroom Remodel"
+      - "Shower Replacement"
+      - "Tub Conversion"
+      - "Walk-In Tubs"
+      - "Bathroom Renovation"
+    Brand:
+      - "Brand Terms"
+      - "Company Name"
+      - "Brand + Service"
+    Competitor:
+      - "Competitor Names"
+      - "Competitor Brand + Service"
+      - "Competitor Alternatives"
+
+keywords:
+  per_ad_group: [20, 30]      # min, max
+  match_type_weights:
+    "Phrase match": 0.904
+    "Exact match": 0.084
+    "Broad match": 0.012
+  status_weights:
+    Eligible: 0.85
+    Limited: 0.10
+    Paused: 0.05
+  keyword_templates:
+    NonBrand:
+      - "{service} {city}"
+      - "{service} near me"
+      - "{service} cost"
+      - "{service} contractor"
+      - "{service} company"
+      - "best {service}"
+      - "affordable {service}"
+      - "{service} installation"
+      - "{service} professionals"
+      - "local {service}"
+    Brand:
+      - "rebath"
+      - "rebath {city}"
+      - "re-bath"
+      - "rebath reviews"
+      - "rebath cost"
+    Competitor:
+      - "bath fitter"
+      - "bath fitter vs rebath"
+      - "safe step tub"
+      - "kohler walk in tub"
+  services:
+    - "bathroom remodel"
+    - "bathroom renovation"
+    - "shower replacement"
+    - "tub to shower conversion"
+    - "walk in tub"
+    - "bathroom contractor"
+    - "bath remodel"
+    - "shower remodel"
+
+search_terms:
+  per_keyword_ratio: [15, 25]  # Source had 21.8x ratio
+  close_variant_rate: 0.75     # 75% are close variants
+  added_excluded_weights:
+    None: 0.90
+    Added: 0.08
+    Excluded: 0.02
+
+quality_scores:
+  distribution:
+    "--": 0.155               # No data
+    1: 0.035
+    2: 0.034
+    3: 0.116
+    4: 0.027
+    5: 0.317                  # Peak
+    6: 0.057
+    7: 0.130
+    8: 0.059
+    9: 0.003                  # Rare
+    10: 0.063
+  exp_ctr_weights:
+    "Above average": 0.30
+    "Average": 0.45
+    "Below average": 0.20
+    "--": 0.05
+  landing_page_weights:
+    "Above average": 0.35
+    "Average": 0.50
+    "Below average": 0.12
+    "--": 0.03
+  ad_relevance_weights:
+    "Above average": 0.32
+    "Average": 0.48
+    "Below average": 0.15
+    "--": 0.05
+
+performance:
+  # Cost per click (from source: mean $74.92)
+  cpc:
+    min: 5.0
+    max: 200.0
+    mean: 74.92
+    std: 35.0
+    distribution: "lognormal"
+
+  # Click-through rate (from source: mean 11.42%)
+  ctr:
+    min: 0.01
+    max: 0.25
+    mean: 0.1142
+    std: 0.04
+
+  # Conversion rate (inferred)
+  conversion_rate:
+    min: 0.005
+    max: 0.15
+    mean: 0.05
+    std: 0.025
+
+  # Impressions per day per keyword
+  impressions:
+    min: 0
+    max: 500
+    mean: 50
+    std: 75
+
+  # Campaign type modifiers
+  type_modifiers:
+    NonBrand:
+      ctr_modifier: 0.9
+      cpc_modifier: 1.1
+      conv_modifier: 0.8
+    Brand:
+      ctr_modifier: 1.5
+      cpc_modifier: 0.6
+      conv_modifier: 1.3
+    Competitor:
+      ctr_modifier: 0.7
+      cpc_modifier: 1.3
+      conv_modifier: 0.6
+
+  # Quality score correlations
+  qs_cpc_modifier:           # Higher QS = lower CPC
+    1: 1.5
+    2: 1.4
+    3: 1.3
+    4: 1.2
+    5: 1.0
+    6: 0.95
+    7: 0.9
+    8: 0.85
+    9: 0.8
+    10: 0.75
+
+competitors:
+  domains:
+    - "angi.com"
+    - "bathfitter.com"
+    - "safesteptub.com"
+    - "kohlershowers.com"
+    - "westshorehome.com"
+    - "statewideremodeling.com"
+    - "homeadvisor.com"
+    - "homedepot.com"
+
+  # Impression share ranges
+  your_impression_share:
+    min: 0.55
+    max: 0.75
+  competitor_impression_share:
+    min: 0.05
+    max: 0.25
+
+seasonality:
+  # Monthly multipliers (Q3 = peak for home remodeling)
+  monthly:
+    1: 0.85    # Jan
+    2: 0.90    # Feb
+    3: 0.95    # Mar
+    4: 1.05    # Apr
+    5: 1.10    # May
+    6: 1.15    # Jun
+    7: 1.20    # Jul (peak)
+    8: 1.15    # Aug
+    9: 1.05    # Sep
+    10: 0.90   # Oct
+    11: 0.80   # Nov
+    12: 0.75   # Dec
+
+  # Day of week multipliers
+  day_of_week:
+    0: 1.1     # Monday
+    1: 1.15    # Tuesday
+    2: 1.15    # Wednesday
+    3: 1.1     # Thursday
+    4: 1.0     # Friday
+    5: 0.85    # Saturday
+    6: 0.65    # Sunday

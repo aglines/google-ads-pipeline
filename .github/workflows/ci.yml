@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+
+    - name: Set up Python
+      run: uv python install 3.11
+
+    - name: Install dependencies
+      run: uv sync
+
+    - name: Run linting
+      run: uv run ruff check .
+
+    - name: Run type checking
+      run: uv run mypy dags/ scripts/ dashboards/ tests/ || true
+      continue-on-error: true
+
+    - name: Run tests
+      run: uv run pytest --cov=src --cov-report=xml
+      env:
+        GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+
+    - name: Upload coverage
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: false
+
+  dbt-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+
+    - name: Set up Python
+      run: uv python install 3.11
+
+    - name: Install dependencies
+      run: uv sync
+
+    - name: Set up service account
+      run: |
+        echo '${{ secrets.GCP_SA_KEY }}' > ${HOME}/gcp-key.json
+        echo "GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcp-key.json" >> $GITHUB_ENV
+
+    - name: Install dbt packages
+      run: uv run dbt deps
+      working-directory: dbt_project
+      env:
+        DBT_PROFILES_DIR: .
+
+    - name: dbt compile
+      run: uv run dbt compile
+      working-directory: dbt_project
+      env:
+        DBT_PROFILES_DIR: .
+        GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}

@@ -1,0 +1,6 @@
+# Copy this file to terraform.tfvars and populate with your values
+# terraform.tfvars is gitignored
+
+project_id  = "your-project-id"
+region      = "us-central1"
+environment = "dev"

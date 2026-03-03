@@ -1,0 +1,52 @@
+[project]
+name = "google-ads-pipeline"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "apache-airflow>=3.1.7",
+    "apache-airflow-providers-google>=19.5.0",
+    "dbt-bigquery>=1.9.0",
+    "faker>=40.1.2",
+    "numpy>=2.4.2",
+    "pandas>=2.0.0,<3.0.0",
+    "plotly>=6.5.2",
+    "python-dateutil>=2.9.0.post0",
+    "python-dotenv>=1.2.1",
+    "pyyaml>=6.0.3",
+    "streamlit>=1.40.0",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.12.0",
+    "mypy>=1.19.1",
+    "pandas-stubs>=3.0.0.260204",
+    "pre-commit>=4.5.1",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "ruff>=0.15.1",
+    "sqlfluff>=4.0.4",
+    "types-pyyaml>=6.0.12.20250915",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v"
+
+[tool.mypy]
+python_version = "3.12"
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
+explicit_package_bases = true
+namespace_packages = true
+# Disable strict checks for now
+warn_return_any = false
+check_untyped_defs = false
+no_implicit_optional = false
+# Allow incomplete type annotations
+allow_untyped_calls = true
+allow_untyped_defs = true
+allow_incomplete_defs = true
