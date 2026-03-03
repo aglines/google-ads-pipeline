@@ -251,14 +251,5 @@ airflow.db-shm
 airflow.db-wal
 docs/Analysis_of_sample_data.md
 docs/DATA_REVIEW.md
-.gitignore
-.claude/log-2026-03-03.md
-.gitignore
-.claude/curr-session.md
-.claude/log-2026-02-03.md
-.claude/log-2026-02-15.md
-.claude/log-2026-02-24.md
-.claude/log-2026-02-09.md
-.claude/log-2026-02-16.md
-.claude/log-2026-02-17.md
-.claude/simplification-plan.md
+
+.claude/
